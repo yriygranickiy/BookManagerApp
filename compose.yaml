@@ -1,0 +1,50 @@
+version: '3.9'
+services:
+  auth-service:
+    build:
+      context: ./authorization
+    container_name: auth-service
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://my_user:qwerty@auth-db/auth_db
+    depends_on:
+      - auth-db
+
+  book-manager-service:
+    build:
+      context: ./bookmanager
+    container_name: book-manager-service
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_URL=postgresql://my_user:qwerty@book-manager-db/book-manager-db
+    depends_on:
+      - book-manager-db
+
+  auth-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: auth_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+
+  book-manager-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: book_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - manager-book-db-data:/var/lib/postgresql/data
+
+volumes:
+  auth-db-data:
+  manager-book-db-data:
+

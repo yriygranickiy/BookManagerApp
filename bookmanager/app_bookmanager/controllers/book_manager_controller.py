@@ -2,12 +2,13 @@ import uuid
 
 from fastapi import APIRouter, HTTPException
 
-from bookmanager.app.models.models import Book
-from bookmanager.app.repositories.book_author_manager_repository import BookManagerRepository
-from bookmanager.app.services.book_author_manager_services import BookManagerService
-from bookmanager.db.database import SessionLocal
-from bookmanager.app.schemas.book_author_manager_schemas import BookCreate, BookResponse, AuthorResponse, \
-    AuthorBooksResponse, BookAuthorResponse
+from app_bookmanager.models.models import Book
+from app_bookmanager.repositories.book_author_manager_repository import BookManagerRepository
+
+from app_bookmanager.schemas.book_author_manager_schemas import BookCreate, BookResponse, AuthorResponse, \
+    BookAuthorResponse
+from app_bookmanager.services.book_author_manager_services import BookManagerService
+from db.database import SessionLocal
 
 router = APIRouter(prefix="/book", tags=["Books"])
 db = SessionLocal()

@@ -4,7 +4,7 @@ from typing import TypeVar, Generic, List, Type, Union
 
 from sqlalchemy.orm import Session, joinedload, DeclarativeMeta
 
-from bookmanager.app.models.models import Book, Author, BookAuthor
+from app_bookmanager.models.models import Book, Author, BookAuthor
 
 T = TypeVar('T')
 
@@ -92,17 +92,8 @@ class BookManagerRepository(BaseBookAuthorRepository):
     def __init__(self, db: Session):
         super().__init__(db, Book)
 
-    # def add_author_to_book(self, author_id: uuid.UUID, book_id: uuid.UUID) -> None:
-    #     book_author = BookAuthor(book_id=book_id, author_id=author_id)
-    #     self.db.add(book_author)
-    #     self.db.commit()
-
-
 class AuthorManagerRepository(BaseBookAuthorRepository):
     def __init__(self, db: Session):
         super().__init__(db, Author)
 
-    # def add_book_to_author(self, author_id: uuid.UUID, book_id: uuid.UUID) -> None:
-    #     author_book = BookAuthor(book_id=book_id, author_id=author_id)
-    #     self.db.add(author_book)
-    #     self.db.commit()
+

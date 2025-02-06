@@ -1,8 +1,8 @@
 import os
-
-from passlib.context import CryptContext
-import jwt
 from datetime import datetime, timedelta
+
+import jwt
+from passlib.context import CryptContext
 
 SECRET_KEY = os.urandom(24)
 ALGORITHM = 'HS256'

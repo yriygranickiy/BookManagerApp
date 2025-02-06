@@ -1,48 +1,69 @@
 version: '3.9'
 services:
-  auth-service:
+  app-auth-service:
     build:
       context: ./authorization
+      dockerfile: Dockerfile
     container_name: auth-service
     ports:
       - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql://my_user:qwerty@auth-db/auth_db
+    networks:
+      - auth-network
     depends_on:
       - auth-db
+    environment:
+      - DATABASE_URL=postgresql://my_user:qwerty@db-auth:5432/auth_db
 
   book-manager-service:
     build:
       context: ./bookmanager
+      dockerfile: Dockerfile
     container_name: book-manager-service
     ports:
       - "8001:8001"
-    environment:
-      - DATABASE_URL=postgresql://my_user:qwerty@book-manager-db/book-manager-db
+    networks:
+      - book-manager-network
     depends_on:
       - book-manager-db
+    environment:
+      - DATABASE_URL=postgresql://my_user:qwerty@db-book-manager:5432/book_db
 
   auth-db:
     image: postgres:15
+    container_name: db-auth
     environment:
       POSTGRES_USER: my_user
       POSTGRES_PASSWORD: qwerty
       POSTGRES_DB: auth_db
     ports:
-      - "5433:5432"
+#      - "5432:5432"
+      - "5434:5432"
+    networks:
+      - auth-network
     volumes:
       - auth-db-data:/var/lib/postgresql/data
 
   book-manager-db:
     image: postgres:15
+    container_name: db-book-manager
     environment:
       POSTGRES_USER: my_user
       POSTGRES_PASSWORD: qwerty
       POSTGRES_DB: book_db
     ports:
-      - "5434:5432"
+      - "5433:5432"
+#      - "5433:5433"
+    networks:
+      - book-manager-network
     volumes:
       - manager-book-db-data:/var/lib/postgresql/data
+
+
+networks:
+  auth-network:
+    driver: bridge
+  book-manager-network:
+    driver: bridge
 
 volumes:
   auth-db-data:

@@ -2,10 +2,9 @@ import uuid
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, Generic, Type
 
-from bookmanager.app.models.models import Author, Book, BookAuthor
-from bookmanager.app.repositories.book_author_manager_repository import ABCBookAuthorManagerRepository, \
+from app_bookmanager.models.models import Author, Book, BookAuthor
+from app_bookmanager.repositories.book_author_manager_repository import ABCBookAuthorManagerRepository, \
     BookManagerRepository, AuthorManagerRepository
-from bookmanager.app.schemas.book_author_manager_schemas import AuthorBooksResponse
 
 T = TypeVar('T')
 

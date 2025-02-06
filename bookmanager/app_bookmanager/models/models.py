@@ -4,7 +4,8 @@ import uuid
 from sqlalchemy import Column, Integer, String, ForeignKey, UUID
 from sqlalchemy.orm import relationship
 
-from bookmanager.db.database import Base
+from db.database import Base
+
 
 class BookAuthor(Base):
     __tablename__ = 'book_author'

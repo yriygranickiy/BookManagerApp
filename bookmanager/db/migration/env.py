@@ -3,15 +3,17 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from bookmanager.app.models.models import Book, Author, BookAuthor
-from bookmanager.db.database import Base
+from bookmanager.app_bookmanager.models.models import Author, BookAuthor, Book
+
 from alembic import context
+
+from bookmanager.db.database import Base
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
-config.set_main_option('sqlalchemy.url', 'postgresql://my_user:qwerty@localhost:5434/book_db')
+config.set_main_option('sqlalchemy.url', 'postgresql://my_user:qwerty@localhost:5433/book_db')
 
 target_metadata = Base.metadata
 

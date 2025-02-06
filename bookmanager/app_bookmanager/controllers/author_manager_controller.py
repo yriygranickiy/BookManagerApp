@@ -3,12 +3,12 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
-from bookmanager.app.models.models import Author
-from bookmanager.app.repositories.book_author_manager_repository import AuthorManagerRepository
-from bookmanager.app.schemas.book_author_manager_schemas import AuthorCreate, AuthorResponse, BookResponse, \
+from app_bookmanager.models.models import Author
+from app_bookmanager.repositories.book_author_manager_repository import AuthorManagerRepository
+from app_bookmanager.schemas.book_author_manager_schemas import AuthorCreate, AuthorResponse, BookResponse, \
     AuthorBooksResponse
-from bookmanager.app.services.book_author_manager_services import AuthorManagerService
-from bookmanager.db.database import SessionLocal
+from app_bookmanager.services.book_author_manager_services import AuthorManagerService
+from db.database import SessionLocal
 
 router = APIRouter(prefix="/authors", tags=["Authors"])
 

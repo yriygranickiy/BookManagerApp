@@ -1,16 +1,17 @@
 from logging.config import fileConfig
 
+from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from alembic import context
 from authorization.db.database import Base
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
-config.set_main_option('sqlalchemy.url', 'postgresql://my_user:qwerty@localhost:5433/auth_db')
+
+config.set_main_option('sqlalchemy.url', 'postgresql://my_user:qwerty@localhost:5432/auth_db')
 
 target_metadata = Base.metadata
 

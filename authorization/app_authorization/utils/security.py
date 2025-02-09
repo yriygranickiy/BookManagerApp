@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 import jwt
 from passlib.context import CryptContext
 
-SECRET_KEY = os.urandom(24)
-ALGORITHM = 'HS256'
+secret_key = os.getenv("JWT_SECRET_KEY")
+algorithm = os.getenv("JWT_ALGORITHM")
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -20,7 +20,7 @@ def create_access_token(data: dict, expires_delta: timedelta) -> str:
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta
     to_encode.update({'exp': expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(to_encode, secret_key, algorithm=algorithm)
 
 
 

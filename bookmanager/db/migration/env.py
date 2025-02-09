@@ -3,7 +3,7 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from bookmanager.app_bookmanager.models.models import Author, BookAuthor, Book
+from bookmanager.app_bookmanager.models.models import Author,Book,Genre,Publisher,BookInstance,BookGenre,BookAuthor,PublisherBook
 
 from alembic import context
 

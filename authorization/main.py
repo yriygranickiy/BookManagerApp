@@ -6,7 +6,7 @@ from app_authorization.controllers.admin_controller import router as admin_route
 
 app = FastAPI()
 
-app.include_router(auth_router, prefix="/auth", tags=["authorization"])
+app.include_router(auth_router)
 app.include_router(admin_router_role)
 
 if __name__ == "__main__":

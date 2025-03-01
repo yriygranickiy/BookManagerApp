@@ -10,7 +10,7 @@ from app_authorization.services.auth_service import UserService
 from app_authorization.utils.security import create_access_token, get_data_user_from_token
 from db.database import SessionLocal
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["authorization"])
 db = SessionLocal()
 user_repo = UserRepository(db)
 role_repo = RoleRepository(db)

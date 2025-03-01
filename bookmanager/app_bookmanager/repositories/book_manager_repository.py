@@ -4,7 +4,7 @@ from typing import TypeVar, Generic, List, Type, Union
 
 from sqlalchemy.orm import Session, joinedload, DeclarativeMeta
 
-from app_bookmanager.models.models import Book, Author, BookAuthor
+from app_bookmanager.models.models import Book, Author, Genre, Publisher, BookInstance
 
 T = TypeVar('T')
 
@@ -24,11 +24,11 @@ class ABCBookAuthorManagerRepository(ABC, Generic[T]):
         raise NotImplementedError
 
     @abstractmethod
-    def update(self, model: T) -> None:
+    def update(self, model_id: uuid.UUID, updated_model: dict):
         raise NotImplementedError
 
     @abstractmethod
-    def delete(self, model: T) -> None:
+    def delete(self, model_id: uuid.UUID) -> None:
         raise NotImplementedError
 
     @abstractmethod
@@ -60,8 +60,15 @@ class BaseBookAuthorRepository(ABCBookAuthorManagerRepository):
         self.db.commit()
         self.db.refresh(model)
 
-    def update(self, model: T) -> None:
-        pass
+    def update(self, model_id: uuid.UUID, updated_model: dict):
+        model = self.db.query(self.model).filter_by(id=model_id).first()
+        if not model:
+            return None
+        for k, v in updated_model.items():
+            setattr(model, k, v)
+        self.db.commit()
+        self.db.refresh(model)
+        return model
 
     def delete(self, model_id: uuid.UUID) -> None:
         model = self.db.query(self.model).filter_by(id=model_id).first()
@@ -88,12 +95,27 @@ class BaseBookAuthorRepository(ABCBookAuthorManagerRepository):
         else:
             print(f'The relationship is already exists!')
 
+
 class BookManagerRepository(BaseBookAuthorRepository):
     def __init__(self, db: Session):
         super().__init__(db, Book)
+
 
 class AuthorManagerRepository(BaseBookAuthorRepository):
     def __init__(self, db: Session):
         super().__init__(db, Author)
 
 
+class GenreManagerRepository(BaseBookAuthorRepository):
+    def __init__(self, db: Session):
+        super().__init__(db, Genre)
+
+
+class PublisherManagerRepository(BaseBookAuthorRepository):
+    def __init__(self, db: Session):
+        super().__init__(db, Publisher)
+
+
+class BookInstanceRepository(BaseBookAuthorRepository):
+    def __init__(self, db: Session):
+        super().__init__(db, BookInstance)

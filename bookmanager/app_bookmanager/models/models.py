@@ -4,7 +4,7 @@ import uuid
 from sqlalchemy import Column, Integer, String, ForeignKey, UUID
 from sqlalchemy.orm import relationship
 
-from bookmanager.db.database import Base
+from db.database import Base
 
 
 class BookAuthor(Base):
@@ -19,7 +19,7 @@ class Book(Base):
     title = Column(String(50), nullable=False)
     numbers_page = Column(Integer, nullable=False)
     authors = relationship('Author', secondary='book_author', back_populates='books')
-    genres = relationship('Genre', secondary='book_genre', back_populates='books')
+    genres = relationship('Genre', secondary='genre_book', back_populates='books')
     publishers = relationship('Publisher', secondary='publisher_book', back_populates='books')
 
 class Author(Base):
@@ -35,7 +35,7 @@ class Genre(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     title = Column(String(50), nullable=False)
-    books = relationship('Book', secondary='', back_populates='genres')
+    books = relationship('Book', secondary='genre_book', back_populates='genres')
 
 class BookGenre(Base):
     __tablename__ = 'genre_book'

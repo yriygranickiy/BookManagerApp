@@ -1,9 +1,11 @@
+import json
 import uuid
 
 from fastapi import APIRouter, HTTPException
+from kafka import KafkaProducer
 from starlette import status
 
-from app_bookmanager.models.models import Book
+from app_bookmanager.models.bookmanager_models import Book
 from app_bookmanager.repositories.book_manager_repository import BookManagerRepository
 
 from app_bookmanager.schemas.book_manager_schemas import BookResponse, AuthorResponse, \
@@ -15,6 +17,18 @@ router = APIRouter(prefix="/book", tags=["Books"])
 db = SessionLocal()
 repository = BookManagerRepository(db)
 service = BookManagerService(repository)
+KAFKA_SERVER = '127.0.0.1:29092'
+KAFKA_TOPIC = 'user_actions'
+producer = KafkaProducer(bootstrap_servers=KAFKA_SERVER,
+                         value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+
+def send_message_to_kafka(book_id: uuid.UUID, title: str, numbers_page: int, ):
+    message = {
+        'book_id': book_id,
+        'title': title,
+
+    }
+    producer.send(KAFKA_TOPIC, message)
 
 
 @router.post('/create-book', status_code=status.HTTP_201_CREATED)
@@ -60,6 +74,8 @@ def get_book_by_id(book_id: uuid.UUID):
 
 @router.get('/get-books', response_model=list[BookResponse], status_code=status.HTTP_200_OK)
 def get_all_books():
+    data = service.get_all()
+
     return service.get_all()
 
 @router.get('/get-authors-from-book', response_model=BookAuthorResponse)

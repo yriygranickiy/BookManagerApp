@@ -5,7 +5,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException
 from starlette import status
 
-from app_bookmanager.models.models import Genre
+from app_bookmanager.models.bookmanager_models import Genre
 from app_bookmanager.repositories.book_manager_repository import GenreManagerRepository
 from app_bookmanager.schemas.book_manager_schemas import GenreRequest, GenreResponse, BooksGenreResponse, BookResponse
 from app_bookmanager.services.book_manager_services import GenreManagerService

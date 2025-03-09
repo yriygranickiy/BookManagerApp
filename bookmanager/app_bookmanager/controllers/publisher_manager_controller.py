@@ -4,7 +4,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException
 from starlette import status
 
-from app_bookmanager.models.models import Publisher
+from app_bookmanager.models.bookmanager_models import Publisher
 from app_bookmanager.repositories.book_manager_repository import PublisherManagerRepository
 from app_bookmanager.schemas.book_manager_schemas import PublisherRequest, PublisherResponse, BooksPublisherResponse, \
     BookResponse

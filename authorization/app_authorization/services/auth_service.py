@@ -5,7 +5,7 @@ from typing import TypeVar, Generic
 from fastapi import HTTPException
 from starlette import status
 
-from app_authorization.models.models import User, RolePermission, UserRoles
+from app_authorization.models.authorization_models import User, RolePermission, UserRoles
 from app_authorization.repositories.auth_repository import UserRepository, ABCAuthorizationRepository, RoleRepository, \
     PermissionRepository
 from app_authorization.schemas.user_schema import UserRequest

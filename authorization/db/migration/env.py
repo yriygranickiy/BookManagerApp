@@ -4,7 +4,7 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from app_authorization.models.models import User, Roles, Permissions, RolePermission, UserRoles
+from app_authorization.models.authorization_models import User, Roles, Permissions, RolePermission, UserRoles
 from db.database import Base
 
 config = context.config

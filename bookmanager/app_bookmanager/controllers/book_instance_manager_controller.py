@@ -6,7 +6,7 @@ from starlette import status
 
 from app_bookmanager.repositories.book_manager_repository import BookInstanceRepository
 from app_bookmanager.schemas.book_manager_schemas import BookInstanceRequest, BookInstanceResponse
-from app_bookmanager.models.models import BookInstance
+from app_bookmanager.models.bookmanager_models import BookInstance
 from app_bookmanager.services.book_manager_services import BookInstanceService
 from db.database import SessionLocal
 

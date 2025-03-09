@@ -1,34 +1,53 @@
 version: '3.9'
+
 services:
   app-auth-service:
     build:
       context: ./authorization
       dockerfile: Dockerfile
     container_name: app-auth-service
-#    ports:
-#      - "8000:8000"
+    ports:
+      - "8000:8000"
     networks:
       - extr
     depends_on:
       - auth-db
     environment:
       - DATABASE_URL=postgresql://my_user:qwerty@db-auth:5432/auth_db
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - JWT_ALGORITHM=${JWT_ALGORITHM}
+    env_file:
+      - .env
 
   book-manager-service:
     build:
       context: ./bookmanager
       dockerfile: Dockerfile
     container_name: book-manager-service
-#    ports:
-#      - "8001:8001"
+    ports:
+      - "8001:8001"
     networks:
       - extr
     depends_on:
       - book-manager-db
     environment:
       - DATABASE_URL=postgresql://my_user:qwerty@db-book-manager:5432/book_db
+    env_file:
+      - .env
+
+  statistics-service:
+    build:
+      context: ./statistics
+      dockerfile: Dockerfile
+    container_name: statistics-service
+    ports:
+      - "8002:8002"
+    networks:
+      - extr
+    depends_on:
+      - statistics-db
+    environment:
+      - DATABASE_URL=postgresql://my_user:qwerty@db-statistics:5432/statistics_db
+    env_file:
+      - .env
 
   apigetaway:
     build:
@@ -37,14 +56,17 @@ services:
     container_name: apigetaway
     ports:
       - "8080:8080"
-    environment:
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - JWT_ALGORITHM=${JWT_ALGORITHM}
     depends_on:
-      - app-auth-service
-      - book-manager-service
+      app-auth-service:
+        condition: service_started
+      book-manager-service:
+        condition: service_started
+      statistics-service:
+        condition: service_started
     networks:
       - extr
+    env_file:
+      - .env
 
   auth-db:
     image: postgres:15
@@ -74,6 +96,49 @@ services:
     volumes:
       - manager-book-db-data:/var/lib/postgresql/data
 
+  statistics-db:
+    image: postgres:15
+    container_name: db-statistics
+    environment:
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: statistics_db
+    ports:
+      - "5435:5432"
+    networks:
+      - extr
+    volumes:
+      - statistics-db-data:/var/lib/postgresql/data
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - extr
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - extr
+
 networks:
   extr:
     driver: bridge
@@ -81,28 +146,4 @@ networks:
 volumes:
   auth-db-data:
   manager-book-db-data:
-
-
-#  zookeeper:
-#    image: confluentinc/cp-zookeeper:latest
-#    environment:
-#      ZOOKEEPER_CLIENT_PORT: 2181
-#      ZOOKEEPER_TICK_TIME: 2000
-#    ports:
-#      - 2181:2181
-
-#  kafka:
-#      image: confluentinc/cp-kafka:latest
-#      depends_on:
-#        - zookeeper
-#      ports:
-#        - 9092:9092
-#        - 29092:29092
-#      environment:
-#        KAFKA_BROKER_ID: 1
-#        KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-#        KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-#        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-#        KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-#        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
+  statistics-db-data:

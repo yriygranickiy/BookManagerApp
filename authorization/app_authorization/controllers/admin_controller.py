@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, HTTPException
 from starlette import status
 
-from app_authorization.models.models import Roles, Permissions
+from app_authorization.models.authorization_models import Roles, Permissions
 from app_authorization.repositories.auth_repository import RoleRepository, PermissionRepository
 from app_authorization.schemas.user_schema import RoleRequest, RoleResponse, PermissionRequest, PermissionResponse
 from app_authorization.services.auth_service import RoleService, PermissionService

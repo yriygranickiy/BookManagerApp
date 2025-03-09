@@ -4,7 +4,7 @@ from typing import TypeVar, Generic, Type
 
 from sqlalchemy.orm import Session, DeclarativeMeta
 
-from app_authorization.models.models import User, Roles, Permissions
+from app_authorization.models.authorization_models import User, Roles, Permissions
 
 T = TypeVar('T')
 

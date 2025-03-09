@@ -4,10 +4,9 @@ from typing import TypeVar, Generic, List, Type, Union
 
 from sqlalchemy.orm import Session, joinedload, DeclarativeMeta
 
-from app_bookmanager.models.models import Book, Author, Genre, Publisher, BookInstance
+from app_bookmanager.models.bookmanager_models import Book, Author, Genre, Publisher, BookInstance
 
 T = TypeVar('T')
-
 
 class ABCBookAuthorManagerRepository(ABC, Generic[T]):
 

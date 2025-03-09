@@ -2,7 +2,7 @@ import uuid
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, Generic, Type
 
-from app_bookmanager.models.models import Author, Book, BookAuthor, Genre, BookGenre, Publisher, PublisherBook
+from app_bookmanager.models.bookmanager_models import Author, Book, BookAuthor, Genre, BookGenre, Publisher, PublisherBook
 from app_bookmanager.repositories.book_manager_repository import ABCBookAuthorManagerRepository, \
     BookManagerRepository, AuthorManagerRepository, GenreManagerRepository, PublisherManagerRepository, \
     BookInstanceRepository

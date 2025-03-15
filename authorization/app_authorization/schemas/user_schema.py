@@ -7,7 +7,6 @@ class UserRequest(BaseModel):
     username: str
     password: str
 
-
 class RoleRequest(BaseModel):
     name: str
 

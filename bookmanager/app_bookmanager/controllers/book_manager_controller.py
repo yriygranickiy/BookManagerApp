@@ -28,7 +28,7 @@ def create_book(book_response: BookRequest):
     return f'Successfully registered book!'
 
 
-@router.post('/add-book-to-genre', status_code=status.HTTP_201_CREATED)
+@router.post('/add-genre-to-book', status_code=status.HTTP_201_CREATED)
 def add_book_to_genre(book_id: uuid.UUID, genre_id: uuid.UUID):
     service.add_book_to_genre(book_id=book_id, genre_id=genre_id)
     return f'Successfully added genre to book!'
@@ -52,7 +52,7 @@ def update_book(book_id: uuid.UUID, updated_data: dict):
     return f'Successfully updated book!'
 
 
-@router.get('/get-book', response_model=BookResponse, status_code=status.HTTP_200_OK)
+@router.get('/get-book/{book_id}', response_model=BookResponse, status_code=status.HTTP_200_OK)
 def get_book_by_id(book_id: uuid.UUID):
     book = service.get_by_id(book_id)
     if not book:
@@ -61,11 +61,10 @@ def get_book_by_id(book_id: uuid.UUID):
 
 @router.get('/get-books', response_model=list[BookResponse], status_code=status.HTTP_200_OK)
 def get_all_books():
-    data = service.get_all()
 
     return service.get_all()
 
-@router.get('/get-authors-from-book', response_model=BookAuthorResponse)
+@router.get('/get-authors-from-book/{book_title}', response_model=BookAuthorResponse)
 def get_all_authors_from_book_by_title(book_title: str):
     books = service.get_all_authors_from_book_by_title(book_title)
     if books:
@@ -76,7 +75,7 @@ def get_all_authors_from_book_by_title(book_title: str):
                                                                surname=author.surname) for author in books.authors])
     raise HTTPException(status_code=404, detail=f'Book with title: {book_title} not found')
 
-@router.delete('/remove-author-from-book')
+@router.delete('/remove-book/{id}')
 def remove_book(book_id: uuid.UUID):
     book = service.get_by_id(book_id)
     if book:

@@ -35,7 +35,7 @@ def update_genre(id_genre: uuid.UUID, updated_genre: dict):
     return f'Successfully updated genre'
 
 
-@router.get("/all-genres", response_model=List[GenreResponse], status_code=status.HTTP_200_OK)
+@router.get("/get-all", response_model=List[GenreResponse], status_code=status.HTTP_200_OK)
 def get_genres():
     try:
         return service.get_all()
@@ -51,7 +51,7 @@ def get_genre_by_genre_id(genre_id: uuid.UUID):
     return genre
 
 
-@router.get("/books-by-genre/{title}", response_model=BooksGenreResponse, status_code=status.HTTP_200_OK)
+@router.get("/get-books-by-title/{title}", response_model=BooksGenreResponse, status_code=status.HTTP_200_OK)
 def get_books_by_genre_title(title: str):
 
     genre = service.get_books_by_genre(title)

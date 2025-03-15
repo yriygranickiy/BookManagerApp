@@ -5,9 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from app_statistic.models.statistic_models import StatisticModel
+from statistic.app_statistic.models.statistic_models import StatisticModel
 
-from db.database import Base
+from statistic.db.database import Base
 
 config = context.config
 

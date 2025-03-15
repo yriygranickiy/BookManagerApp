@@ -2,9 +2,8 @@ import uuid
 from abc import ABC, abstractmethod
 from typing import TypeVar, Generic
 
-import consumer_service
 
-from app_statistic.repository.statistic_repository import ABCStatisticsManagerRepository, StatisticsRepository
+from app_statistic.repository.statistic_repository import ABCStatisticsManagerRepository, StatisticRepository
 
 T = TypeVar('T')
 
@@ -52,7 +51,7 @@ class BaseStatisticService(ABCStatisticManagerService):
         self.repository.delete(model_id)
 
 class StatisticService(BaseStatisticService):
-    def __init__(self, repository: StatisticsRepository):
+    def __init__(self, repository: StatisticRepository):
         super().__init__(repository)
         self.repository = repository
 

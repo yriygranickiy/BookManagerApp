@@ -3,8 +3,8 @@ from pydantic import BaseModel
 
 
 class EventSchema(BaseModel):
-    id: uuid.UUID
-    username: str
     id_book_instance: uuid.UUID
+    username: str
     status: str
+    timestamp: int
 

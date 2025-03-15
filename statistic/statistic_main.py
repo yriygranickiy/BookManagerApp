@@ -1,4 +1,4 @@
-from app_statistic.controllers import controllers
+
 from app_statistic.service import consumer_service
 
 

@@ -4,6 +4,8 @@ from typing import TypeVar, Generic
 
 from sqlalchemy.orm import Session
 
+from app_statistic.models.statistic_models import StatisticModel
+
 T = TypeVar('T')
 
 
@@ -60,6 +62,6 @@ class BaseStatisticsRepository(ABCStatisticsManagerRepository):
         self.db.refresh(model)
         return model
     
-class StatisticsRepository(BaseStatisticsRepository):
-    def __init__(self, db: Session, model: T):
-        super().__init__(db, model)
+class StatisticRepository(BaseStatisticsRepository):
+    def __init__(self, db: Session):
+        super().__init__(db, StatisticModel)

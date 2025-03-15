@@ -1,7 +1,11 @@
+import json
+import os
 import uuid
 from datetime import timedelta
 
+from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException
+from kafka import KafkaProducer
 from starlette import status
 
 from app_authorization.repositories.auth_repository import UserRepository, RoleRepository
@@ -15,7 +19,6 @@ db = SessionLocal()
 user_repo = UserRepository(db)
 role_repo = RoleRepository(db)
 auth_service = UserService(user_repo, role_repo)
-
 
 @router.post("/register")
 def register(user: UserRequest):
@@ -37,7 +40,7 @@ def login(user_request: UserRequest):
     access_token = create_access_token(data={"username": user.username, "permissions": permissions},
                                        expires_delta=timedelta(hours=1))
     user_data = get_data_user_from_token(access_token)
-    return {"access_token": access_token, "permissions": user_data["permissions"]}
+    return {"access_token": access_token}
 
 @router.get("/get-all-users", status_code=status.HTTP_200_OK, response_model=list[UserResponse])
 def get_all_users():

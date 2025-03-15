@@ -17,19 +17,6 @@ router = APIRouter(prefix="/book", tags=["Books"])
 db = SessionLocal()
 repository = BookManagerRepository(db)
 service = BookManagerService(repository)
-KAFKA_SERVER = '127.0.0.1:29092'
-KAFKA_TOPIC = 'user_actions'
-producer = KafkaProducer(bootstrap_servers=KAFKA_SERVER,
-                         value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-
-def send_message_to_kafka(book_id: uuid.UUID, title: str, numbers_page: int, ):
-    message = {
-        'book_id': book_id,
-        'title': title,
-
-    }
-    producer.send(KAFKA_TOPIC, message)
-
 
 @router.post('/create-book', status_code=status.HTTP_201_CREATED)
 def create_book(book_response: BookRequest):

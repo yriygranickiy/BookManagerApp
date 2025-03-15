@@ -1,7 +1,11 @@
+import json
+import os
 import uuid
+from _pydatetime import datetime
 from http import HTTPStatus
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException,Request
+from kafka import KafkaProducer
 from starlette import status
 
 from app_bookmanager.repositories.book_manager_repository import BookInstanceRepository
@@ -15,9 +19,22 @@ router = APIRouter(prefix="/book_instance", tags=["BookInstance"])
 db = SessionLocal()
 repository = BookInstanceRepository(db)
 service = BookInstanceService(repository)
+#
+KAFKA_SERVER = os.getenv("KAFKA_BROKER_URL", "localhost:29092")
+KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', 'user_actions')
+producer = KafkaProducer(bootstrap_servers=KAFKA_SERVER,
+                         value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
+def send_message_to_kafka(username: str, id: uuid.UUID, status: str, time: datetime):
+    message = {
+        "id": str(id),
+        "username": username,
+        "status": status,
+        "time": int(time)
+    }
+    producer.send(KAFKA_TOPIC, message)
 
-@router.post("/crate-book-instance", status_code=status.HTTP_201_CREATED)
+@router.post("/create-book-instance", status_code=status.HTTP_201_CREATED)
 def create_book_instance(request: BookInstanceRequest):
     try:
         book_instance = BookInstance(book_id=request.book_id,
@@ -28,13 +45,16 @@ def create_book_instance(request: BookInstanceRequest):
         return HTTPStatus.BAD_REQUEST, str(e)
 
 @router.put("/update-book-instance/{book_instance_id}", status_code=status.HTTP_200_OK)
-def update_book_instance(book_instance_id: uuid.UUID, updated_data: dict):
+def update_book_instance(book_instance_id: uuid.UUID, updated_data: dict, request: Request):
     book_instance = service.get_by_id(book_instance_id)
     if book_instance is None:
         return HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"BookInstance with id: {book_instance_id} not "
                                                                       f"found")
+    timestamp = datetime.timestamp(datetime.now())
     service.update(book_instance_id, updated_data)
-    return f'Successfully registered book_instance!'
+    send_message_to_kafka(request.headers.get('username'),book_instance_id, updated_data.get("status"), timestamp)
+
+    return f'Successfully updated book instance!'
 
 @router.get("/book-instances", response_model=list[BookInstanceResponse], status_code=status.HTTP_200_OK)
 def get_all_book_instance():

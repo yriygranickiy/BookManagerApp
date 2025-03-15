@@ -35,7 +35,7 @@ def update_publisher(id_publisher: uuid.UUID, updated_publisher: dict):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Publisher with id: {id_publisher} not found")
     service.update(id_publisher, updated_publisher)
     return f'Successfully updated publisher'
-@router.get("/publishers-list", status_code=status.HTTP_200_OK, response_model=List[PublisherResponse])
+@router.get("/get-all", status_code=status.HTTP_200_OK, response_model=List[PublisherResponse])
 def get_publishers():
     try:
         return service.get_all()
@@ -50,7 +50,7 @@ def get_publisher_by_id(publisher_id: uuid.UUID):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f'Publisher with id: {publisher_id} not found')
     return publisher
 
-@router.get("/get-books-by-publisher/{name_publisher}", status_code=status.HTTP_200_OK,
+@router.get("/get-books-from-publisher/{name_publisher}", status_code=status.HTTP_200_OK,
             response_model=BooksPublisherResponse)
 def get_books_by_publisher_id(name_publisher: str):
     publisher = service.get_books_by_publisher(name_publisher)

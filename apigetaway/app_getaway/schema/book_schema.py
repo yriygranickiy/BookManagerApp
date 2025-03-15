@@ -24,3 +24,7 @@ class AuthorToBookRequest(BaseModel):
 
 class GenreRequest(BaseModel):
     title: str
+
+class PublisherRequest(BaseModel):
+    title: str
+    location:str

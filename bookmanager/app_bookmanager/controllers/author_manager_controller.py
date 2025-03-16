@@ -36,7 +36,7 @@ def update_author(author_id: uuid.UUID, updated_data: dict):
     service.update(author_id, updated_data)
     return f'Successfully updated author!'
 
-@router.get('/get-books_written_author', response_model=AuthorBooksResponse,status_code=status.HTTP_200_OK)
+@router.get('/get-books-written-author/{author_last_name}', response_model=AuthorBooksResponse,status_code=status.HTTP_200_OK)
 def get_books_written_author(author_last_name: str):
 
     author = service.get_all_books_written_author_by_last_name(author_last_name)
@@ -51,7 +51,7 @@ def get_books_written_author(author_last_name: str):
 def get_authors():
     return service.get_all()
 
-@router.get('/get-author', response_model=AuthorResponse, status_code=status.HTTP_200_OK)
+@router.get('/get-author/{author_id}', response_model=AuthorResponse, status_code=status.HTTP_200_OK)
 def get_author_by_id(author_id: uuid.UUID):
     author = service.get_by_id(author_id)
     if not author:

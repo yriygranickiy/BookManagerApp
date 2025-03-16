@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual Environment
+venv/
+.env
+
+# Logs
+logs/
+*.log
+
+# Database & Migrations
+alembic/versions/
+*.sqlite3
+db.sqlite3
+instance/
+
+# Docker
+*.pid
+*.sock
+docker-compose.override.yml
+
+# Kafka
+kafka-logs/
+*.log
+
+# FastAPI & Uvicorn
+*.db
+debug.log
+
+# IDE / Editor
+.vscode/
+.idea/
+*.iml
+
+# OS Specific
+.DS_Store
+Thumbs.db

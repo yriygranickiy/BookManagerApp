@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app_getaway.decorators.decorator import require_permission
 from app_getaway.schema.book_schema import BookInstanceRequest, BookRequest, GenreToBookRequest, PublisherToBookRequest, \
-    AuthorToBookRequest, GenreRequest, PublisherRequest
+    AuthorBookRequest, GenreRequest, PublisherRequest, AuthorRequest
 from app_getaway.security.auth import get_user_meta
 
 router = APIRouter(prefix="/apigetaway", tags=["apigetaway_bookmanager"])
@@ -81,7 +81,7 @@ def forward_add_publisher_to_book(meta: Annotated[dict, Depends(get_user_meta)],
 @router.post('book/add-author-to-book')
 @require_permission(["CREATE_BOOK"])
 def forward_add_author_to_book(meta: Annotated[dict, Depends(get_user_meta)],
-                               data: AuthorToBookRequest):
+                               data: AuthorBookRequest):
     try:
         payload = data.model_dump_json()
         headers = {
@@ -454,6 +454,7 @@ def forward_get_publisher_by_id(meta: Annotated[dict, Depends(get_user_meta)],
         raise HTTPException(status_code=500, detail=f'Publisher service error: {str(e)}')
 
 @router.get('/publisher/get-books-from-publisher/{title}')
+@require_permission(["READ_PUBLISHER"])
 def forward_get_books_from_publisher_by_title(meta: Annotated[dict, Depends(get_user_meta)],
                                               title:str):
     try:
@@ -471,6 +472,7 @@ def forward_get_books_from_publisher_by_title(meta: Annotated[dict, Depends(get_
         raise HTTPException(status_code=500, detail=f'Publisher service error: {str(e)}')
 
 @router.delete('/publisher/{id}')
+@require_permission(["DELETE_PUBLISHER"])
 def forward_delete_publisher(meta: Annotated[dict, Depends(get_user_meta)],
                              id:uuid.UUID):
     try:
@@ -487,3 +489,134 @@ def forward_delete_publisher(meta: Annotated[dict, Depends(get_user_meta)],
     except Exception as e:
         raise HTTPException(status_code=500, detail=f'Publisher service error: {str(e)}')
 
+#AUTHOR_CONTROLLER
+@router.post('/author/create-author')
+@require_permission(["CREATE_AUTHOR"])
+def forward_create_author(meta: Annotated[dict, Depends(get_user_meta)],
+                          data:AuthorRequest):
+    try:
+        payload = data.model_dump_json()
+        headers = {
+            "permissions": f'{meta["permissions"]}'
+        }
+        if not data:
+            raise HTTPException(status_code=400,detail="Empty author")
+        response = requests.post(f'{MICROSERVICE_BOOKMANAGER_URL}/author/create-author',
+                                 headers=headers,
+                                 data=payload)
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=f'Author create failed')
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Author create failed')
+
+@router.post('/author/add-book-to-author')
+@require_permission(["CREATE_AUTHOR"])
+def forward_add_book_to_author(meta: Annotated[dict, Depends(get_user_meta)],
+                               data:AuthorBookRequest):
+    try:
+        payload = data.model_dump_json()
+        headres = {
+            "permissions": f'{meta["permissions"]}'
+        }
+        if not data:
+            raise HTTPException(status_code=400,detail="Empty author")
+        response = requests.post(f'{MICROSERVICE_BOOKMANAGER_URL}/author/add-book-to-author',
+                                 headers=headres,
+                                 data=payload)
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=f'Book add failed')
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Book add failed')
+
+@router.put('/author/update-author/{id}')
+@require_permission(["UPDATE_AUTHOR"])
+def forward_update_author(meta: Annotated[dict, Depends(get_user_meta)],
+                          id: uuid.UUID,
+                          updated_data: dict):
+    try:
+        headers = {
+            "permissions": f'{meta["permissions"]}'
+        }
+        if not id:
+            raise HTTPException(status_code=400,detail="Empty id")
+        response = requests.put(f'{MICROSERVICE_BOOKMANAGER_URL}/author/update-author/{id}',
+                                headers=headers,
+                                json=json.dumps(updated_data))
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=f'Author update failed')
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Author update failed')
+
+@router.get('author/get-all')
+@require_permission(["READ_AUTHOR"])
+def forward_get_all_authors(meta: Annotated[dict, Depends(get_user_meta)]):
+    try:
+        headers = {
+            "permissions": f'{meta["permissions"]}'
+        }
+        if not meta:
+            raise HTTPException(status_code=400,detail="Empty author")
+        response = requests.get(f'{MICROSERVICE_BOOKMANAGER_URL}/author/get-all',
+                                headers=headers)
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=f'Author get all failed')
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Author get all failed')
+
+@router.get('/author/{id}')
+@require_permission(["READ_AUTHOR"])
+def forward_get_author_by_id(meta: Annotated[dict, Depends(get_user_meta)],
+                             id: uuid.UUID):
+    try:
+        headers = {
+            "permissions": f'{meta["permissions"]}'
+        }
+        if not id:
+            raise HTTPException(status_code=400,detail="Empty id")
+        response = requests.get(f'{MICROSERVICE_BOOKMANAGER_URL}/author/{id}',
+                                headers=headers)
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=f'Author get author {id} failed')
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Author get author {id} failed')
+
+@router.get('author/get-all-books/{lastname}')
+@require_permission(["READ_AUTHOR"])
+def forward_get_all_books_written_author_by_lastname(meta: Annotated[dict, Depends(get_user_meta)],
+                                                     lastname: str):
+    try:
+        headers = {
+            "permissions": f'{meta["permissions"]}'
+        }
+        if not lastname:
+            raise HTTPException(status_code=400,detail="Empty lastname")
+        response = requests.get(f'{MICROSERVICE_BOOKMANAGER_URL}/author/get-books-written-author/{lastname}',
+                                headers=headers)
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=f'Author get books written author {lastname} failed')
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Author get author {lastname} failed')
+
+@router.delete('/author/{id}')
+@require_permission(["DELETE_AUTHOR"])
+def forward_delete_author_by_id(meta: Annotated[dict, Depends(get_user_meta)],
+                                id: uuid.UUID):
+    try:
+        headers = {
+            "permissions": f'{meta["permissions"]}'
+        }
+        if not id:
+            raise HTTPException(status_code=400,detail="Empty id")
+        response = requests.delete(f'{MICROSERVICE_BOOKMANAGER_URL}/author/{id}',
+                                   headers=headers)
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=f'Author delete author {id} failed')
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Author delete author {id} failed')

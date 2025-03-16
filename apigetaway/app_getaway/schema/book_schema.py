@@ -18,7 +18,7 @@ class PublisherToBookRequest(BaseModel):
     book_id: uuid.UUID
     publisher_id: uuid.UUID
 
-class AuthorToBookRequest(BaseModel):
+class AuthorBookRequest(BaseModel):
     book_id: uuid.UUID
     author_id: uuid.UUID
 
@@ -28,3 +28,8 @@ class GenreRequest(BaseModel):
 class PublisherRequest(BaseModel):
     title: str
     location:str
+
+class AuthorRequest(BaseModel):
+    first_name: str
+    last_name: str
+    surname: str
